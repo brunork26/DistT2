@@ -1,1 +1,1 @@
-Coordenador: 192.168.1.1
+NodoBKP - 192.168.1.1
