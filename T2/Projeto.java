@@ -25,7 +25,7 @@ import java.net.InetAddress;
 
 
 */
-public class Main extends Thread  {
+public class Projeto extends Thread  {
     String status = "";
     // Contador que simula a quantidade de dados que tem no Buffer 
     // Contador controlado por um semáforo

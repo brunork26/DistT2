@@ -1,4 +1,4 @@
 rm -rf *.class *~
 javac Consumidor.java
-javac Main.java
+javac Projeto.java
 javac Produtor.java
