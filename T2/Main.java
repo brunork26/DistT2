@@ -9,6 +9,7 @@ import java.net.InetAddress;
 /*
     1 - Cria o nodo que nunca morre e registra na primeira linha do arquivo
     2 - Abre uma thread com socket que fica esperando os nodos para registrar seus dados no arq.txt
+    3 - 
 
 
 
@@ -45,7 +46,7 @@ public class Main extends Thread  {
             }
             // Processo que nunca morre
             case "a":{
-                //Primeira linha do arquivo tem o IP do coordenador
+                //Primeira linha do arquivo tem o IP do nodo que nunca morre
                 try{
                     BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt"));
                     arquivo.append("NodoBKP - 192.168.1.1");
@@ -56,15 +57,14 @@ public class Main extends Thread  {
                     System.out.println("Problema na escrita do arquivo/n");
                 }
 
-               
-                
                 break;
             }
 
         }
 
     }
-    //Espera a conexão de algum Nodo Subsequente para gravar no arq.txt
+    // Espera a conexão de algum Nodo Subsequente para gravar no arq.txt 
+    // ou operações de recuperação de informações pós eleição
     public static void abreThreadSocket()   {
         new Thread(new Runnable() {
             @Override
@@ -78,7 +78,6 @@ public class Main extends Thread  {
                 try {     
                     DatagramSocket serverSocket = new DatagramSocket(porta);
                
-
                     while(true){
                         
                         try {
@@ -87,12 +86,13 @@ public class Main extends Thread  {
                             System.out.println("Esperando Conexão dos Nodos... \n");
                         
                             serverSocket.receive(pacoteUDP);
+
+                            System.out.println("Novo Nodo conectado...\n");
                             
                         } catch (Exception e) {
                             System.out.println("\nErro no recebimento do pacote UDP\n");
                         }
                         
-                    
                     }
                 }catch (Exception e) {
                     System.out.println("Erro na abertura do server Socket");
@@ -100,6 +100,8 @@ public class Main extends Thread  {
              }
        }).start();
     }
+
+
     // Abre conexão socket e atualiza o arquivo no Nodo que nunca morre
     public void atualizaArquivo(){
         try{
