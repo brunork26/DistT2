@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -38,7 +39,7 @@ public class Main extends Thread  {
             //Primeira linha do arquivo tem o IP do nodo que nunca morre
             try{
                 BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt"));
-                arquivo.append("NodoBKP - " + args[0]);
+                arquivo.append("NodoBKP - " + args[0] + "\n");
                 System.out.println("Registro do Nodo que não morre Completo! \n");
                 arquivo.close();
                 // Inicia Thread/Servidor
@@ -68,6 +69,7 @@ public class Main extends Thread  {
                     envioDados.length, InetAddress.getByName(ipNodoQueNaoMorre) , portaNodoQueNaoMorre);
 
                 clientSocket.send(pacoteUDP);
+                clientSocket.close();
             } catch (Exception e) {
                 
             }
@@ -81,18 +83,17 @@ public class Main extends Thread  {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int porta = 9876;
-	        	int numConn = 1;
-                
+
                 byte[] recebeDados = new byte[1024];
-		        byte[] enviaDados = new byte[1024];
                 
                 try {     
-                    DatagramSocket serverSocket = new DatagramSocket(porta);
-               
+                    DatagramSocket serverSocket = new DatagramSocket(portaNodoQueNaoMorre);
+                                  
                     while(true){
                         
                         try {
+                            
+                            BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
                             System.out.println("Esperando Conexão dos Nodos... \n");
@@ -103,13 +104,17 @@ public class Main extends Thread  {
                             System.out.println("Novo Nodo conectado...\n");
 
                             String dadosPacote = new String(pacoteUDP.getData());
-                            System.out.println("ID/IP/PORTA - "+dadosPacote + "\n");
+                            System.out.println("ID/IP/PORTA - " + dadosPacote + "\n");
 
-                            // SPLIT na string - '/' separa os dados
-                            
+                            arquivo.append(dadosPacote);
+                            arquivo.append("\n") ;
+                            arquivo.close();
+
                         } catch (Exception e) {
-                            System.out.println("\nErro no recebimento do pacote UDP\n");
-                        }
+                            System.out.println("\nErro no recebimento do pacote UDP ou na escrita do arquivo\n");
+                            System.out.println(e.getMessage() + "\n");
+ 
+                        } 
                         
                     }
                 }catch (Exception e) {
