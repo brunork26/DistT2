@@ -41,6 +41,7 @@ public class Main extends Thread  {
                 BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt"));
                 arquivo.append("NodoBKP - " + args[0] + "\n");
                 System.out.println("Registro do Nodo que não morre Completo! \n");
+                arquivo.flush();
                 arquivo.close();
                 // Inicia Thread/Servidor
                 abreThreadSocket();
@@ -103,11 +104,14 @@ public class Main extends Thread  {
                             
                             System.out.println("Novo Nodo conectado...\n");
 
-                            String dadosPacote = new String(pacoteUDP.getData());
+                            String dadosPacote = new String(pacoteUDP.getData(), "UTF-8");
+                            String arrayDados[] = dadosPacote.split("/"); // TST
+
                             System.out.println("ID/IP/PORTA - " + dadosPacote + "\n");
 
                             arquivo.append(dadosPacote);
                             arquivo.append("\n") ;
+                            arquivo.flush();
                             arquivo.close();
 
                         } catch (Exception e) {
