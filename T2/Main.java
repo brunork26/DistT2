@@ -30,37 +30,24 @@ public class Main extends Thread  {
     // Contador controlado por um semáforo
     int buffer = 10;
     public static void main(String[] args){
-        
 
-        //switch(args[4]){  Linha completa de comando com 5 argumentos
-        switch(args[0]){
-            // Caso Produtor
-            case "p":{
-            
-                break;
+        // Processo que nunca morre
+        if(args.length == 1){
+            //Primeira linha do arquivo tem o IP do nodo que nunca morre
+            try{
+                BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt"));
+                arquivo.append("NodoBKP - " + args[0]);
+                System.out.println("Registro do Nodo que não morre Completo! \n");
+                arquivo.close();
+                // Inicia Thread/Servidor
+                abreThreadSocket();
+            }catch(Exception ex){
+                System.out.println("Problema na escrita do arquivo/n");
             }
-            // Caso Consumidor
-            case "c":{
-                
-                break;
-            }
-            // Processo que nunca morre
-            case "a":{
-                //Primeira linha do arquivo tem o IP do nodo que nunca morre
-                try{
-                    BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt"));
-                    arquivo.append("NodoBKP - 192.168.1.1");
-                    System.out.println("Registro do Nodo que não morre Completo! \n");
-                    arquivo.close();
-                    abreThreadSocket();
-                }catch(Exception ex){
-                    System.out.println("Problema na escrita do arquivo/n");
-                }
-
-                break;
-            }
+        }else{
 
         }
+    
 
     }
     // Espera a conexão de algum Nodo Subsequente para gravar no arq.txt 
@@ -84,9 +71,7 @@ public class Main extends Thread  {
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
                             System.out.println("Esperando Conexão dos Nodos... \n");
-                        
                             serverSocket.receive(pacoteUDP);
-
                             System.out.println("Novo Nodo conectado...\n");
                             
                         } catch (Exception e) {
@@ -102,16 +87,16 @@ public class Main extends Thread  {
     }
 
 
-    // Abre conexão socket e atualiza o arquivo no Nodo que nunca morre
-    public void atualizaArquivo(){
-        try{
+    // // Abre conexão socket e atualiza o arquivo no Nodo que nunca morre
+    // public void atualizaArquivo(){
+    //     try{
 
-        BufferedReader buffRead = new BufferedReader(new FileReader("./arq.txt"));
-        String linha = "";
+    //     BufferedReader buffRead = new BufferedReader(new FileReader("./arq.txt"));
+    //     String linha = "";
 
-        }catch(Exception ex){
-            System.out.println(ex.getMessage());
-        }
+    //     }catch(Exception ex){
+    //         System.out.println(ex.getMessage());
+    //     }
 
-    }
+    // }
 }
