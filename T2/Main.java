@@ -29,6 +29,8 @@ public class Main extends Thread  {
     // Contador que simula a quantidade de dados que tem no Buffer 
     // Contador controlado por um semáforo
     int buffer = 10;
+    public static String ipNodoQueNaoMorre = "localhost";
+    public static int portaNodoQueNaoMorre = 9876;
     public static void main(String[] args){
 
         // Processo que nunca morre
@@ -44,8 +46,31 @@ public class Main extends Thread  {
             }catch(Exception ex){
                 System.out.println("Problema na escrita do arquivo/n");
             }
-        }else{
 
+        // Produtor ou Consumidor
+        }else{
+    
+            String host = "", id = "", portaNodo = "";
+            String registro = "";
+            
+            byte[] envioDados = new byte[1024];
+
+            id = args[1];
+            host = args[2];
+            portaNodo = args[3];
+
+            registro = id + "/" + host + "/" + portaNodo;
+            envioDados = registro.getBytes();
+  
+            try {
+                DatagramSocket clientSocket = new DatagramSocket();
+                DatagramPacket pacoteUDP = new DatagramPacket(envioDados,
+                    envioDados.length, InetAddress.getByName(ipNodoQueNaoMorre) , portaNodoQueNaoMorre);
+
+                clientSocket.send(pacoteUDP);
+            } catch (Exception e) {
+                
+            }
         }
     
 
@@ -71,8 +96,16 @@ public class Main extends Thread  {
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
                             System.out.println("Esperando Conexão dos Nodos... \n");
+                            
+                            // Espera recebimento de pacote
                             serverSocket.receive(pacoteUDP);
+                            
                             System.out.println("Novo Nodo conectado...\n");
+
+                            String dadosPacote = new String(pacoteUDP.getData());
+                            System.out.println("ID/IP/PORTA - "+dadosPacote + "\n");
+
+                            // SPLIT na string - '/' separa os dados
                             
                         } catch (Exception e) {
                             System.out.println("\nErro no recebimento do pacote UDP\n");
