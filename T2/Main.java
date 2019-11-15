@@ -104,13 +104,12 @@ public class Main extends Thread  {
                             
                             System.out.println("Novo Nodo conectado...\n");
 
-                            String dadosPacote = new String(pacoteUDP.getData(), "UTF-8");
-                            String arrayDados[] = dadosPacote.split("/"); // TST
+                            String dadosPacote = new String(pacoteUDP.getData(),
+                                                 pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
 
                             System.out.println("ID/IP/PORTA - " + dadosPacote + "\n");
 
-                            arquivo.append(dadosPacote);
-                            arquivo.append("\n") ;
+                            arquivo.append(dadosPacote + "\n");
                             arquivo.flush();
                             arquivo.close();
 
