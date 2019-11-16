@@ -125,9 +125,6 @@ public class Projeto extends Thread  {
                 
                 try {     
                     
-                     
-                       
- 
                     while(true){
                         
                         try {
@@ -196,17 +193,4 @@ public class Projeto extends Thread  {
        }).start();
     }
 
-
-    // // Abre conexão socket e atualiza o arquivo no Nodo que nunca morre
-    // public void atualizaArquivo(){
-    //     try{
-
-    //     BufferedReader buffRead = new BufferedReader(new FileReader("./arq.txt"));
-    //     String linha = "";
-
-    //     }catch(Exception ex){
-    //         System.out.println(ex.getMessage());
-    //     }
-
-    // }
 }
