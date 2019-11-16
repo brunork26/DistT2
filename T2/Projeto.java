@@ -26,12 +26,14 @@ import java.net.InetAddress;
 
 */
 public class Projeto extends Thread  {
-    String status = "";
+    //Status se já tem ou nao coordenador na primeira passagem
+    public static String status = "sem coordenador";
     // Contador que simula a quantidade de dados que tem no Buffer 
     // Contador controlado por um semáforo
     int buffer = 10;
     public static String ipNodoQueNaoMorre = "localhost";
     public static int portaNodoQueNaoMorre = 9876;
+
     public static void main(String[] args){
 
         // Processo que nunca morre
@@ -52,10 +54,14 @@ public class Projeto extends Thread  {
         // Produtor ou Consumidor
         }else{
     
+            // Primeiro salva as informaçoes no arquivo txt
             String host = "", id = "", portaNodo = "";
             String registro = "";
             
             byte[] envioDados = new byte[1024];
+
+            //Byte de confirmação se é ou nao o coordenador quando inicia o processo
+            byte[] recebeDados = new byte[1];
 
             id = args[1];
             host = args[2];
@@ -71,6 +77,34 @@ public class Projeto extends Thread  {
 
                 clientSocket.send(pacoteUDP);
                 clientSocket.close();
+
+                // Após registro, necessário saber se é o primeiro nodo a se registrar
+                // Se for, então é coordenador
+
+                DatagramSocket serverSocket = new DatagramSocket(Integer.parseInt(args[3]));
+                pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
+                
+                System.out.println("Esperando Confirmação se Nodo é Coordenador... \n");
+                
+                 // Espera recebimento de pacote
+                serverSocket.receive(pacoteUDP);
+
+                String confirmacaoCoord = new String(pacoteUDP.getData(),
+                                      pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
+
+                System.out.println(confirmacaoCoord);
+
+                // Se coordenador, entra no loop que gerencia os Nodos subsequentes e Buffer (Liberando acessos)
+                // Se não só 'consome/produz' dados
+                if(confirmacaoCoord.equals("S")){
+                    System.out.println("Sou o Coordenador MOTHAFOCKA");
+                }else{
+
+                    System.out.println("Sou Ninguem");
+                    
+                }
+                serverSocket.close();
+
             } catch (Exception e) {
                 
             }
@@ -85,15 +119,20 @@ public class Projeto extends Thread  {
             @Override
             public void run() {
 
+                //Envia Confirmação de coordenador 
+                byte[] envioDados = new byte[1];
                 byte[] recebeDados = new byte[1024];
                 
                 try {     
-                    DatagramSocket serverSocket = new DatagramSocket(portaNodoQueNaoMorre);
-                                  
+                    
+                     
+                       
+ 
                     while(true){
                         
                         try {
-                            
+                            DatagramSocket serverSocket = new DatagramSocket(portaNodoQueNaoMorre);
+                            DatagramSocket clientSocket = new DatagramSocket(); 
                             BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
@@ -112,6 +151,36 @@ public class Projeto extends Thread  {
                             arquivo.append(dadosPacote + "\n");
                             arquivo.flush();
                             arquivo.close();
+                            serverSocket.close();
+
+                            
+                            // infos:
+                            // 0 - id 
+                            // 1 - host
+                            // 2 - porta
+                            String[] infos = dadosPacote.split("/");
+                            String flagCoord = "";
+                            
+                            System.out.println("Enviando Confirmação de Coordenador\n");
+
+                             // Envio da confirmação se é ou nao o coordenador
+                            if(status.equals("sem coordenador")){
+                                flagCoord = "S";
+                                status = "com coordenador";
+                                envioDados = flagCoord.getBytes();
+                                
+                            }else{
+                                flagCoord = "N";
+                                envioDados = flagCoord.getBytes();
+                            }
+
+                            pacoteUDP = new DatagramPacket(envioDados,
+                                            envioDados.length, InetAddress.getByName(infos[1]) , Integer.parseInt(infos[2]));
+                            
+                            clientSocket.send(pacoteUDP);
+                            clientSocket.close();
+
+                            System.out.println("Confirmação enviada\n");
 
                         } catch (Exception e) {
                             System.out.println("\nErro no recebimento do pacote UDP ou na escrita do arquivo\n");
