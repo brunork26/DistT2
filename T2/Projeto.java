@@ -119,6 +119,8 @@ public class Projeto extends Thread  {
                     // Recebe o IP e a porta do Coordenador
                     ipCoordenador = infosConfirmacao[1];
                     portaCoordenador = Integer.parseInt(infosConfirmacao[2]);
+
+                    System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
                     
                     
                 }
