@@ -10,7 +10,15 @@ import java.net.InetAddress;
 /*
     1 - Cria o nodo que nunca morre e registra na primeira linha do arquivo
     2 - Abre uma thread com socket que fica esperando os nodos para registrar seus dados no arq.txt
-    3 - 
+    3 - Nodos se registram e o primeiro nodo que se registra vira o coordenador.
+    4 - Nodos subsequentes são Produtores ou Consumidores
+    5 - 1 consumidor consome por vez
+    6 - 1 Produtor produz por ver
+    7 - Semáforos: 
+        - Produtores só produzem com buffer vazio
+        - 1 produtor por vez
+        - Consumidores tem prioridade na chegada de um produtor se o buffer possuir dados
+
 
 
 
