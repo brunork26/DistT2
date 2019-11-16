@@ -36,11 +36,15 @@ import java.net.InetAddress;
 public class Projeto extends Thread  {
     //Status se já tem ou nao coordenador na primeira passagem
     public static String status = "sem coordenador";
+    public static String tipo = "nenhum";
     // Contador que simula a quantidade de dados que tem no Buffer 
     // Contador controlado por um semáforo
     int buffer = 10;
     public static String ipNodoQueNaoMorre = "localhost";
     public static int portaNodoQueNaoMorre = 9876;
+
+    public static String ipCoordenador = "";
+    public static int portaCoordenador;
 
     public static void main(String[] args){
 
@@ -69,11 +73,12 @@ public class Projeto extends Thread  {
             byte[] envioDados = new byte[1024];
 
             //Byte de confirmação se é ou nao o coordenador quando inicia o processo
-            byte[] recebeDados = new byte[1];
+            byte[] recebeDados = new byte[1024];
 
             id = args[1];
             host = args[2];
             portaNodo = args[3];
+            tipo = args[4];
 
             registro = id + "/" + host + "/" + portaNodo;
             envioDados = registro.getBytes();
@@ -100,15 +105,21 @@ public class Projeto extends Thread  {
                 String confirmacaoCoord = new String(pacoteUDP.getData(),
                                       pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
 
+                String[] infosConfirmacao = confirmacaoCoord.split("/");                                                          
+
                 System.out.println(confirmacaoCoord);
 
                 // Se coordenador, entra no loop que gerencia os Nodos subsequentes e Buffer (Liberando acessos)
                 // Se não só 'consome/produz' dados
-                if(confirmacaoCoord.equals("S")){
-                    System.out.println("Sou o Coordenador MOTHAFOCKA");
+                if(confirmacaoCoord.equals(infosConfirmacao[0])){
+                    System.out.println("Nodo Coordenador ID:" + id + "\n");
+                
+                
                 }else{
-
-                    System.out.println("Sou Ninguem");
+                    // Recebe o IP e a porta do Coordenador
+                    ipCoordenador = infosConfirmacao[1];
+                    portaCoordenador = Integer.parseInt(infosConfirmacao[2]);
+                    
                     
                 }
                 serverSocket.close();
@@ -128,7 +139,7 @@ public class Projeto extends Thread  {
             public void run() {
 
                 //Envia Confirmação de coordenador 
-                byte[] envioDados = new byte[1];
+                byte[] envioDados = new byte[1024];
                 byte[] recebeDados = new byte[1024];
                 
                 try {     
@@ -171,11 +182,14 @@ public class Projeto extends Thread  {
                              // Envio da confirmação se é ou nao o coordenador
                             if(status.equals("sem coordenador")){
                                 flagCoord = "S";
+                                ipCoordenador = infos[1];
+                                portaCoordenador = Integer.parseInt(infos[2]);
                                 status = "com coordenador";
                                 envioDados = flagCoord.getBytes();
                                 
                             }else{
-                                flagCoord = "N";
+                                // Envia para o nodo o IP do coordenador 
+                                flagCoord = "N/"+ipCoordenador+"/"+portaCoordenador;
                                 envioDados = flagCoord.getBytes();
                             }
 
