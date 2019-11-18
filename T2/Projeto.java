@@ -135,14 +135,16 @@ public class Projeto extends Thread  {
                     String dadosNodoNovo = args[1] + "/"+ args[2] + "/" + args[3];
                     envioDados = dadosNodoNovo.getBytes();
 
-                    pacoteUDP = new DatagramPacket(envioDados,
+                    DatagramSocket clientSocket2 = new DatagramSocket();
+                    DatagramPacket pacoteUDP2 = new DatagramPacket(envioDados,
                     envioDados.length, InetAddress.getByName(ipCoordenador) , portaCoordenador);
 
-                    clientSocket.send(pacoteUDP);
-                    clientSocket.close();
+                    clientSocket2.send(pacoteUDP2);
+                    clientSocket2.close();
 
                     System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
                     
+                    System.out.println("\nEnvio de dados para o coordenador salvar no TXT \n");
                     // loop de Consumo ou produção
                     
                 }
