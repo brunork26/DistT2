@@ -141,13 +141,14 @@ public class Projeto extends Thread  {
                     System.out.println("\nAQUI HUGO ->"+ipCoordenador + "-" + portaCoordenador+"\n");
                     // Envia para o coordenador os dados do novo Nodo COnectado para salvar no arq.txt
                   
+                    registro += "\n";
                     envioDados = registro.getBytes();
                     // Porta diferente devido ao recebimento do arquivo
                     DatagramPacket pacoteUDP1 = new DatagramPacket(envioDados,
                     envioDados.length, InetAddress.getByName(ipCoordenador) , portCoordenadorArquivo);
 
-                    clientSocket.send(pacoteUDP1);
-                    
+                    clientSocket1.send(pacoteUDP1);
+                    clientSocket1.close();
 
                     System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
                     
@@ -374,7 +375,7 @@ public class Projeto extends Thread  {
                         
                     }
                 }catch (Exception e) {
-                    System.out.println("Erro na abertura do server Socket");
+                    System.out.println("Erro na abertura do server Socket 2");
                 }
              }
        }).start();
