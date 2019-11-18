@@ -19,19 +19,6 @@ import java.net.InetAddress;
         - 1 produtor por vez
         - Consumidores tem prioridade na chegada de um produtor se o buffer possuir dados
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 */
 public class Projeto extends Thread  {
     //Status se já tem ou nao coordenador na primeira passagem
@@ -40,7 +27,7 @@ public class Projeto extends Thread  {
     // Contador que simula a quantidade de dados que tem no Buffer 
     // Contador controlado por um semáforo
     int buffer = 10;
-    public static String ipNodoQueNaoMorre = "localhost";
+    public static String ipNodoQueNaoMorre = "10.32.160.80";
     public static int portaNodoQueNaoMorre = 9876;
 
     public static String ipCoordenador = "";
@@ -191,7 +178,7 @@ public class Projeto extends Thread  {
                                 
                             }else{
                                 // Envia para o nodo o IP do coordenador 
-                                flagCoord = "N/"+ipCoordenador+"/"+portaCoordenador;
+                                flagCoord = "Coordenador:/"+ipCoordenador+"/"+portaCoordenador;
                                 envioDados = flagCoord.getBytes();
                             }
 
