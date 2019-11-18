@@ -110,9 +110,11 @@ public class Projeto extends Thread  {
                 // Se não só 'consome/produz' dados
                 if(infosConfirmacao[0].equals("S")){
                     System.out.println("Nodo Coordenador É vc - ID:" + id + "\n");
+                    ipCoordenador = host;
+                    portaCoordenador = portaNodo;
+
                     // Thread de atualização do arquivo.txt
                     arqCoordThread();
-
 
                     // Coordenação dos eventos 
                     while(true){
