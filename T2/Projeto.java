@@ -81,6 +81,7 @@ public class Projeto extends Thread  {
             envioDados = registro.getBytes();
   
             try {
+                // Envia para Nodo que nunca morre as informações do Nodo
                 DatagramSocket clientSocket = new DatagramSocket();
                 DatagramPacket pacoteUDP = new DatagramPacket(envioDados,
                     envioDados.length, InetAddress.getByName(ipNodoQueNaoMorre) , portaNodoQueNaoMorre);
@@ -131,16 +132,16 @@ public class Projeto extends Thread  {
                     ipCoordenador = infosConfirmacao[1];
                     portaCoordenador = Integer.parseInt(infosConfirmacao[2]);
 
+                    System.out.println("\nAQUI HUGO ->"+ipCoordenador + "-" + portaCoordenador+"\n");
                     // Envia para o coordenador os dados do novo Nodo COnectado para salvar no arq.txt
-                    String dadosNodoNovo = args[1] + "/"+ args[2] + "/" + args[3];
-                    envioDados = dadosNodoNovo.getBytes();
+                  
+                    envioDados = registro.getBytes();
 
-                    DatagramSocket clientSocket2 = new DatagramSocket();
-                    DatagramPacket pacoteUDP2 = new DatagramPacket(envioDados,
+                    pacoteUDP = new DatagramPacket(envioDados,
                     envioDados.length, InetAddress.getByName(ipCoordenador) , portaCoordenador);
 
-                    clientSocket2.send(pacoteUDP2);
-                    clientSocket2.close();
+                    clientSocket.send(pacoteUDP);
+                    
 
                     System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
                     
@@ -214,7 +215,7 @@ public class Projeto extends Thread  {
                                 
                             }else{
                                 //envia para o nodo novo o IP do coordenador 
-                                flagCoord  = ipCoordenador+"/"+portaCoordenador;
+                                flagCoord  = "N/"+ipCoordenador+"/"+portaCoordenador;
                                 envioDados = flagCoord.getBytes();
                             }
 
@@ -250,8 +251,8 @@ public class Projeto extends Thread  {
             @Override
             public void run() {
                 try {
-                    DatagramSocket serverSocket2 = new DatagramSocket(portaCoordenador);
-                    DatagramPacket pacoteUDP2 = new DatagramPacket(recebeDados,recebeDados.length);
+                    DatagramSocket serverSocket = new DatagramSocket(portaCoordenador);
+                    DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
                 
                 
                     while(true){
@@ -259,11 +260,11 @@ public class Projeto extends Thread  {
                             
                             BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
                             // Espera recebimento de pacote
-                            serverSocket2.receive(pacoteUDP2);
+                            serverSocket.receive(pacoteUDP);
                             
                             // Recebe ID - IP - PORTA do novo NODO conectado 
-                            String dadosPacote = new String(pacoteUDP2.getData(),
-                                                pacoteUDP2.getOffset(), pacoteUDP2.getLength(),"UTF-8");
+                            String dadosPacote = new String(pacoteUDP.getData(),
+                                                pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
                             
                             arquivo.append(dadosPacote);
                             arquivo.close();
