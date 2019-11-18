@@ -25,7 +25,9 @@ import java.util.ArrayList;
 public class Projeto extends Thread  {
     //Status se já tem ou nao coordenador na primeira passagem
     public static String status = "sem coordenador";
+    // Consumidor ou produtor
     public static String tipo = "nenhum";
+
     // Contador que simula a quantidade de dados que tem no Buffer 
     // Contador controlado por um semáforo
     public static int buffer = 10;
@@ -74,6 +76,7 @@ public class Projeto extends Thread  {
             portaNodo = args[3];
             tipo = args[4];
 
+            // registro TXT nodo que nunca morre
             registro = id + "/" + host + "/" + portaNodo;
             envioDados = registro.getBytes();
   
@@ -105,7 +108,7 @@ public class Projeto extends Thread  {
 
                 // Se coordenador, entra no loop que gerencia os Nodos subsequentes e Buffer (Liberando acessos)
                 // Se não só 'consome/produz' dados
-                if(confirmacaoCoord.equals(infosConfirmacao[0])){
+                if(infosConfirmacao[0].equals("N")){
                     System.out.println("Nodo Coordenador ID:" + id + "\n");
 
                     // Coordenação dos eventos 
@@ -125,6 +128,7 @@ public class Projeto extends Thread  {
 
                     System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
                     
+                    // loop de Consumo ou produção
                     
                 }
                 serverSocket.close();
@@ -186,7 +190,7 @@ public class Projeto extends Thread  {
 
                              // Envio da confirmação se é ou nao o coordenador
                             if(status.equals("sem coordenador")){
-                                flagCoord = "S";
+                                flagCoord = "S/";
                                 ipCoordenador = infos[1];
                                 portaCoordenador = Integer.parseInt(infos[2]);
                                 status = "com coordenador";
