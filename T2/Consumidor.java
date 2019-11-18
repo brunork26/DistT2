@@ -15,7 +15,7 @@ public class Consumidor {
         // Pede acesso a thread execução
         try {
             DatagramSocket clientSocket = new DatagramSocket();
-
+            while(true) {
             String servidor = s;
             int porta = p;
     
@@ -45,6 +45,8 @@ public class Consumidor {
             System.out.println("Texto recebido do servidor:" + modifiedSentence);
             clientSocket.close();
             System.out.println("Socket cliente fechado!");
+            }
+            
         } catch(Exception e) {
 
         }

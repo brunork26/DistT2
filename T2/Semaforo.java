@@ -16,6 +16,6 @@ public class Semaforo {
     
     public synchronized void V() {
         count++;
-        notify(); /* acordar quem estiver em espera */
+        notifyAll(); /* acordar quem estiver em espera */
     }
 }

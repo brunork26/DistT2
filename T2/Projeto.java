@@ -101,7 +101,7 @@ public class Projeto extends Thread  {
                 DatagramSocket serverSocket = new DatagramSocket(Integer.parseInt(args[3]));
                 pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
                 
-                System.out.println("Esperando Confirmação se Nodo é Coordenador... \n");
+               // System.out.println("Esperando Confirmação se Nodo é Coordenador... \n");
                 
                  // Espera recebimento de pacote
                 serverSocket.receive(pacoteUDP);
@@ -150,22 +150,18 @@ public class Projeto extends Thread  {
                     clientSocket1.send(pacoteUDP1);
                     clientSocket1.close();
 
-                    System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
+                   // System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
                     
-                    System.out.println("\nEnvio de dados para o coordenador salvar no TXT \n");
+                    //System.out.println("\nEnvio de dados para o coordenador salvar no TXT \n");
                     // loop de Consumo ou produção
                     if(tipo.equals("c")) {
                         int idConsumidor = Integer.parseInt(id);
                         Consumidor c = new Consumidor(idConsumidor, 1);
-                        while(true) {
-                            c.consumir(ipCoordenador, portaCoordenadorExec);
-                        }
+                        c.consumir(ipCoordenador, portaCoordenadorExec);  
                     } else if (tipo.equals("p")) {
                         int idProdutor = Integer.parseInt(id);
                         Produtor p = new Produtor(idProdutor, 1);
-                        while(true) {
-                            p.produzir(ipCoordenador, portaCoordenadorExec);
-                        }
+                        p.produzir(ipCoordenador, portaCoordenadorExec);
                     }
                     
                 }
@@ -199,12 +195,12 @@ public class Projeto extends Thread  {
                             BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
-                            System.out.println("Esperando Conexão dos Nodos... \n");
+                           // System.out.println("Esperando Conexão dos Nodos... \n");
                             
                             // Espera recebimento de pacote
                             serverSocket.receive(pacoteUDP);
                             
-                            System.out.println("Novo Nodo conectado...\n");
+                           // System.out.println("Novo Nodo conectado...\n");
 
                             String dadosPacote = new String(pacoteUDP.getData(),
                                                  pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
@@ -223,7 +219,7 @@ public class Projeto extends Thread  {
                             String[] infos = dadosPacote.split("/");
                             String flagCoord = "";
                             
-                            System.out.println("Enviando Confirmação de Coordenador\n");
+                           // System.out.println("Enviando Confirmação de Coordenador\n");
 
                              // Envio da confirmação se é ou nao o coordenador
                             if(status.equals("sem coordenador")){
@@ -245,7 +241,7 @@ public class Projeto extends Thread  {
                             clientSocket.send(pacoteUDP);
                             //clientSocket.close();
 
-                            System.out.println("Confirmação enviada\n");
+                           // System.out.println("Confirmação enviada\n");
 
                         } catch (Exception e) {
                             System.out.println("\nErro no recebimento do pacote UDP ou na escrita do arquivo\n");
@@ -266,7 +262,7 @@ public class Projeto extends Thread  {
         byte[] envioDados = new byte[1024];
         byte[] recebeDados = new byte[1024];
         
-        System.out.println("\nThread de Atualização do arquivo do coordenador aberta...\n");
+        //System.out.println("\nThread de Atualização do arquivo do coordenador aberta...\n");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -286,7 +282,7 @@ public class Projeto extends Thread  {
                             arquivo.append(dadosPacote);
                             arquivo.close();
 
-                            System.out.println("\nNovo Nodo Conectado...\n");
+                            //System.out.println("\nNovo Nodo Conectado...\n");
                             
                         } catch (Exception e) {
                             
@@ -316,13 +312,14 @@ public class Projeto extends Thread  {
                 byte[] recebeDados = new byte[1024];
                 try {           
                     DatagramSocket serverSocket = new DatagramSocket(portaCoordenadorExec);
+                    sBuffer = new Semaforo(10);
                     while(true){                      
                         try {
                                  
                             DatagramSocket clientSocket = new DatagramSocket(); 
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
-                            System.out.println("Esperando Conexão dos Nodos 2... \n");
+                            //System.out.println("Esperando Conexão dos Nodos 2... \n");
                             
                             // Espera recebimento de pacote
                             serverSocket.receive(pacoteUDP);
@@ -331,27 +328,34 @@ public class Projeto extends Thread  {
                                 public void run() {
                                     try {
                                         byte[] envioDados = new byte[1024];
-                                    System.out.println("Novo Nodo conectado 2...\n");
+                                        //System.out.println("Novo Nodo conectado 2...\n");
 
-                                    String dadosPacote = new String(pacoteUDP.getData(),
+                                        String dadosPacote = new String(pacoteUDP.getData(),
                                                          pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
-                                    String tipo = dadosPacote.substring(0,1);
-                                    int id = Integer.parseInt(dadosPacote.substring(2,3));
-                                    int valor = Integer.parseInt(dadosPacote.substring(4));
-                                    String sentence = "";
-                                    System.out.println(sentence);
-                                    switch(tipo) {
-                                        case "c": {
+                                        String tipo = dadosPacote.substring(0,1);
+                                        int id = Integer.parseInt(dadosPacote.substring(2,3));
+                                        int valor = Integer.parseInt(dadosPacote.substring(4));
+                                        String sentence = "";
+                                        System.out.println(sentence);
+                                        switch(tipo) {
+                                           case "c": {
+                                                    sleep(3000);
                                                     System.out.println("Quer consumir"); 
                                                     bufferCompartilhado.get(id);
                                                     sentence = "Consumidor: " + id + 
                                                                "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
+                                                    if(bufferCompartilhado.getConteudo() == 0) {
+                                                        sBuffer.V();
+                                                    }
                                                   } break;
                                         case "p": {
+                                                    sBuffer.P();
+                                                    sleep(3000);
                                                     System.out.println("Quer Produzir"); 
-                                                    bufferCompartilhado.set(id, valor);
+                                                    bufferCompartilhado.set(id, 10);
                                                     sentence = "Produtor: " + id + 
                                                     "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
+                                                    sBuffer.V();
                                                   } break;
                                         default: {
                                             System.out.println("Pacote UDP com problemas");
@@ -367,7 +371,7 @@ public class Projeto extends Thread  {
                                     envioDados = capitalizedSentence.getBytes();
                                     
                                     DatagramPacket sendPacket = new DatagramPacket(envioDados, envioDados.length, ip, porta);
-                                    clientSocket.send(pacoteUDP);
+                                    clientSocket.send(sendPacket);
                                     clientSocket.close();
         
                                     System.out.println("Confirmação enviada\n");

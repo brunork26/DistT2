@@ -12,8 +12,11 @@ public class Buffer {
                 e.printStackTrace();
             }
         }
-        conteudo = valor;
-        System.out.println("Produtor #" + idProdutor + " colocou " + conteudo);
+        if(conteudo == 0 ) {
+            conteudo += valor;
+        }
+        
+        System.out.println("Produtor #" + idProdutor + " tem " + conteudo);
         disponivel = true;
         notifyAll();
     }
@@ -28,9 +31,12 @@ public class Buffer {
                 e.printStackTrace();
             }
         }
-        System.out.println("Consumidor #" + idConsumidor + " consumiu: "
+        System.out.println("Consumidor #" + idConsumidor + " conteudo: "
                 + conteudo);
         disponivel = false;
+        if(conteudo > 0 ) {
+            conteudo -= 1;
+        }
         notifyAll();
         return conteudo;
     }
