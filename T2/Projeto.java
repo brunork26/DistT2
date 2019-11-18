@@ -42,13 +42,13 @@ public class Projeto extends Thread  {
     public ArrayList<Integer> arConsEspera = new ArrayList<Integer>();
     public ArrayList<Integer> arProdEspera = new ArrayList<Integer>();
 
-    public static void main(String[] args){
-
+    public static void main(String[] args)throws Exception{
+        BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt"));
         // Processo que nunca morre
         if(args.length == 1){
             //Primeira linha do arquivo tem o IP do nodo que nunca morre
             try{
-                BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt"));
+                
                 arquivo.append("NodoBKP - " + args[0] + "\n");
                 System.out.println("Registro do Nodo que não morre Completo! \n");
                 arquivo.flush();
@@ -61,7 +61,7 @@ public class Projeto extends Thread  {
 
         // Produtor ou Consumidor
         }else{
-    
+            
             // Primeiro salva as informaçoes no arquivo txt
             String host = "", id = "", portaNodo = "";
             String registro = "";
