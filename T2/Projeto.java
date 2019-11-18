@@ -126,7 +126,7 @@ public class Projeto extends Thread  {
                     while(true){
                         // Espera recebimento de pacote - Caso seja consumidor ou Produtor
                         serverSocket.receive(pacoteUDP);
-
+                        threadExecucao();
 
 
                     }
@@ -134,6 +134,7 @@ public class Projeto extends Thread  {
                 
                 }else{
                     // Recebe o IP e a porta do Coordenador
+                    DatagramSocket clientSocket1 = new DatagramSocket();
                     ipCoordenador = infosConfirmacao[1];
                     portaCoordenador = Integer.parseInt(infosConfirmacao[2]);
 
@@ -142,10 +143,10 @@ public class Projeto extends Thread  {
                   
                     envioDados = registro.getBytes();
                     // Porta diferente devido ao recebimento do arquivo
-                    pacoteUDP = new DatagramPacket(envioDados,
+                    DatagramPacket pacoteUDP1 = new DatagramPacket(envioDados,
                     envioDados.length, InetAddress.getByName(ipCoordenador) , portCoordenadorArquivo);
 
-                    clientSocket.send(pacoteUDP);
+                    clientSocket.send(pacoteUDP1);
                     
 
                     System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
