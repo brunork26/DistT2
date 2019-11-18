@@ -122,15 +122,14 @@ public class Projeto extends Thread  {
 
                     // Thread de atualização do arquivo.txt
                     arqCoordThread();
-
+                    threadExecucao();
                     // Coordenação dos eventos 
-                    while(true){
-                        // Espera recebimento de pacote - Caso seja consumidor ou Produtor
-                        serverSocket.receive(pacoteUDP);
-                        threadExecucao();
+                    // while(true){
+                    //     // Espera recebimento de pacote - Caso seja consumidor ou Produtor
+                    //     serverSocket.receive(pacoteUDP);
+                    
 
-
-                    }
+                    // }
                 
                 
                 }else{
@@ -159,13 +158,13 @@ public class Projeto extends Thread  {
                         int idConsumidor = Integer.parseInt(id);
                         Consumidor c = new Consumidor(idConsumidor, 1);
                         while(true) {
-                            c.consumir(ipCoordenador, portaCoordenador);
+                            c.consumir(ipCoordenador, portaCoordenadorExec);
                         }
                     } else if (tipo.equals("p")) {
                         int idProdutor = Integer.parseInt(id);
                         Produtor p = new Produtor(idProdutor, 1);
                         while(true) {
-                            p.produzir(ipCoordenador, portaCoordenador);
+                            p.produzir(ipCoordenador, portaCoordenadorExec);
                         }
                     }
                     
@@ -322,12 +321,12 @@ public class Projeto extends Thread  {
                             DatagramSocket clientSocket = new DatagramSocket(); 
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
-                            System.out.println("Esperando Conexão dos Nodos... \n");
+                            System.out.println("Esperando Conexão dos Nodos 2... \n");
                             
                             // Espera recebimento de pacote
                             serverSocket.receive(pacoteUDP);
                             
-                            System.out.println("Novo Nodo conectado...\n");
+                            System.out.println("Novo Nodo conectado 2...\n");
 
                             String dadosPacote = new String(pacoteUDP.getData(),
                                                  pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
@@ -335,7 +334,7 @@ public class Projeto extends Thread  {
                             int id = Integer.parseInt(dadosPacote.substring(2,3));
                             int valor = Integer.parseInt(dadosPacote.substring(4));
                             String sentence = "";
-
+                            System.out.println(sentence);
                             switch(tipo) {
                                 case "c": {
                                             System.out.println("Quer consumir"); 
@@ -375,6 +374,7 @@ public class Projeto extends Thread  {
                         } 
                         
                     }
+                    
                 }catch (Exception e) {
                     System.out.println("Erro na abertura do server Socket 2");
                 }
