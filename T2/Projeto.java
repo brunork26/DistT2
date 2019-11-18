@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
+
 
 /*
     1 - Cria o nodo que nunca morre e registra na primeira linha do arquivo
@@ -26,12 +28,17 @@ public class Projeto extends Thread  {
     public static String tipo = "nenhum";
     // Contador que simula a quantidade de dados que tem no Buffer 
     // Contador controlado por um semáforo
-    int buffer = 10;
+    public static int buffer = 10;
     public static String ipNodoQueNaoMorre = "10.32.160.80";
     public static int portaNodoQueNaoMorre = 9876;
 
     public static String ipCoordenador = "";
     public static int portaCoordenador;
+
+    public static Semaforo sBuffer,sConsumidor,sProdutor;
+
+    public ArrayList<Integer> arConsEspera = new ArrayList<Integer>();
+    public ArrayList<Integer> arProdEspera = new ArrayList<Integer>();
 
     public static void main(String[] args){
 
@@ -100,6 +107,15 @@ public class Projeto extends Thread  {
                 // Se não só 'consome/produz' dados
                 if(confirmacaoCoord.equals(infosConfirmacao[0])){
                     System.out.println("Nodo Coordenador ID:" + id + "\n");
+
+                    // Coordenação dos eventos 
+                    while(true){
+                        // Espera recebimento de pacote - Caso seja consumidor ou Produtor
+                        serverSocket.receive(pacoteUDP);
+
+
+
+                    }
                 
                 
                 }else{
