@@ -109,11 +109,11 @@ public class Projeto extends Thread  {
                 // Se coordenador, entra no loop que gerencia os Nodos subsequentes e Buffer (Liberando acessos)
                 // Se não só 'consome/produz' dados
                 if(infosConfirmacao[0].equals("S")){
-                    System.out.println("Nodo Coordenador É vc ID:" + id + "\n");
+                    System.out.println("Nodo Coordenador É vc - ID:" + id + "\n");
                     // Thread de atualização do arquivo.txt
                     arqCoordThread();
 
-                    
+
                     // Coordenação dos eventos 
                     while(true){
                         // Espera recebimento de pacote - Caso seja consumidor ou Produtor
