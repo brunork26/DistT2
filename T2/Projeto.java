@@ -108,9 +108,12 @@ public class Projeto extends Thread  {
 
                 // Se coordenador, entra no loop que gerencia os Nodos subsequentes e Buffer (Liberando acessos)
                 // Se não só 'consome/produz' dados
-                if(infosConfirmacao[0].equals("N")){
-                    System.out.println("Nodo Coordenador ID:" + id + "\n");
+                if(infosConfirmacao[0].equals("S")){
+                    System.out.println("Nodo Coordenador É vc ID:" + id + "\n");
+                    // Thread de atualização do arquivo.txt
+                    arqCoordThread();
 
+                    
                     // Coordenação dos eventos 
                     while(true){
                         // Espera recebimento de pacote - Caso seja consumidor ou Produtor
@@ -178,7 +181,6 @@ public class Projeto extends Thread  {
                             arquivo.close();
                             serverSocket.close();
 
-                            
                             // infos:
                             // 0 - id 
                             // 1 - host
@@ -222,6 +224,48 @@ public class Projeto extends Thread  {
                 }
              }
        }).start();
+    }
+
+    public static void arqCoordThread(){
+        //Envia e recebe dados via socket
+        byte[] envioDados = new byte[1024];
+        byte[] recebeDados = new byte[1024];
+        
+        System.out.println("\nThread de Atualização do arquivo do coordenador aberta...\n");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                while(true){
+                    try {
+                        DatagramSocket serverSocket = new DatagramSocket(portaCoordenador);
+                        DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
+                        BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
+                        // Espera recebimento de pacote
+                        serverSocket.receive(pacoteUDP);
+                        
+                        // Recebe ID - IP - PORTA do novo NODO conectado 
+                        String dadosPacote = new String(pacoteUDP.getData(),
+                                            pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
+                        
+                        arquivo.append(dadosPacote);
+                        arquivo.close();
+
+                        System.out.println("\nNovo Nodo Conectado...\n");
+                        
+                    } catch (Exception e) {
+                        
+                    }
+                }
+                
+
+            
+            
+            }
+            
+    
+                   
+        }).start();
     }
 
 }
