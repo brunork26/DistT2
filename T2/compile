@@ -1,4 +1,5 @@
 rm -rf *.class *~
 javac Consumidor.java
 javac Projeto.java
+javac Buffer.java
 javac Produtor.java

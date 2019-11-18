@@ -34,4 +34,8 @@ public class Buffer {
         notifyAll();
         return conteudo;
     }
+
+    public int getConteudo() {
+        return conteudo;
+    }
 }

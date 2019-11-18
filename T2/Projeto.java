@@ -33,6 +33,7 @@ public class Projeto extends Thread  {
     public static int buffer = 10;
     public static String ipNodoQueNaoMorre = "10.32.160.80";
     public static int portaNodoQueNaoMorre = 9876;
+    public static Buffer bufferCompartilhado = new Buffer();
 
     public static String ipCoordenador = "";
     public static int portaCoordenador;
@@ -43,6 +44,8 @@ public class Projeto extends Thread  {
     public ArrayList<Integer> arProdEspera = new ArrayList<Integer>();
 
     public static void main(String[] args){
+
+        
 
         // Processo que nunca morre
         if(args.length == 1){
@@ -80,7 +83,7 @@ public class Projeto extends Thread  {
             registro = id + "/" + host + "/" + portaNodo;
             envioDados = registro.getBytes();
 
-            Buffer bufferCompartilhado = new Buffer();
+            
   
             try {
                 DatagramSocket clientSocket = new DatagramSocket();
@@ -135,12 +138,17 @@ public class Projeto extends Thread  {
                     
                     // loop de Consumo ou produção
                     if(tipo.equals("c")) {
-                        Consumidor c = new Consumidor(Integer.parseInt(id), bufferCompartilhado, 1);
-                        c.start();
-
+                        int idConsumidor = Integer.parseInt(id);
+                        Consumidor c = new Consumidor(idConsumidor, 1);
+                        while(true) {
+                            c.consumir(ipCoordenador, portaCoordenador);
+                        }
                     } else if (tipo.equals("p")) {
-                        Produtor p = new Produtor(Integer.parseInt(id), bufferCompartilhado, 1);
-                        p.start();
+                        int idProdutor = Integer.parseInt(id);
+                        Produtor p = new Produtor(idProdutor, 1);
+                        while(true) {
+                            p.produzir(ipCoordenador, portaCoordenador);
+                        }
                     }
                     
                 }
@@ -276,6 +284,81 @@ public class Projeto extends Thread  {
     
                    
         }).start();
+    }
+
+    public static void threadExecucao()   {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                //Envia Confirmação de coordenador 
+                byte[] envioDados = new byte[1024];
+                byte[] recebeDados = new byte[1024];
+                try {           
+                    DatagramSocket serverSocket = new DatagramSocket(portaCoordenador);
+                    while(true){                      
+                        try {        
+                            DatagramSocket clientSocket = new DatagramSocket(); 
+                            // Pacote UDP de recebimento
+                            DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
+                            System.out.println("Esperando Conexão dos Nodos... \n");
+                            
+                            // Espera recebimento de pacote
+                            serverSocket.receive(pacoteUDP);
+                            
+                            System.out.println("Novo Nodo conectado...\n");
+
+                            String dadosPacote = new String(pacoteUDP.getData(),
+                                                 pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
+                            String tipo = dadosPacote.substring(0,1);
+                            int id = Integer.parseInt(dadosPacote.substring(2,3));
+                            int valor = Integer.parseInt(dadosPacote.substring(4));
+                            String sentence = "";
+
+                            switch(tipo) {
+                                case "c": {
+                                            System.out.println("Quer consumir"); 
+                                            bufferCompartilhado.get(id);
+                                            sentence = "Consumidor: " + id + 
+                                                       "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
+                                          } break;
+                                case "p": {
+                                            System.out.println("Quer Produzir"); 
+                                            bufferCompartilhado.set(id, valor);
+                                            sentence = "Produtor: " + id + 
+                                            "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
+                                          } break;
+                                default: {
+                                    System.out.println("Pacote UDP com problemas");
+                                    System.exit(0);
+                                } break;
+                            }
+                            //serverSocket.close();
+			                System.out.println(sentence);
+			                InetAddress ip = pacoteUDP.getAddress();
+			                int porta = pacoteUDP.getPort();
+			                String capitalizedSentence = sentence.toUpperCase();
+ 
+                            envioDados = capitalizedSentence.getBytes();
+                            
+                            DatagramPacket sendPacket = new DatagramPacket(envioDados, envioDados.length, ip, porta);
+                            clientSocket.send(pacoteUDP);
+                            clientSocket.close();
+
+                            System.out.println("Confirmação enviada\n");
+
+                        } catch (Exception e) {
+                            System.out.println("\nErro no recebimento do pacote UDP ou na escrita do arquivo\n");
+                            System.out.println(e.getMessage() + "\n");
+ 
+                        } 
+                        
+                    }
+                }catch (Exception e) {
+                    System.out.println("Erro na abertura do server Socket");
+                }
+             }
+       }).start();
     }
 
 }
