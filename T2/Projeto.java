@@ -199,13 +199,14 @@ public class Projeto extends Thread  {
                                 envioDados = flagCoord.getBytes();
                                 
                             }else{
+                                DatagramSocket clientSocket2 = new DatagramSocket(); 
                                 // Primeiro envia para o coordenador as informações do novo Nodo que se conectou
                                 String infoAtualiz = infos[0] + "/"+ infos[1] + "/" +infos[2];
                                 envioDados = infoAtualiz.getBytes();
                                 pacoteUDP = new DatagramPacket(envioDados,
                                             envioDados.length, InetAddress.getByName(ipCoordenador) , portaCoordenador);
-                                clientSocket.send(pacoteUDP);
-                                
+                                clientSocket2.send(pacoteUDP);
+                                clientSocket2.close();
                                 // Depois, envia para o nodo novo o IP do coordenador 
                                 flagCoord  = ipCoordenador+"/"+portaCoordenador;
                                 envioDados = flagCoord.getBytes();
