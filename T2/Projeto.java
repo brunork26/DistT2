@@ -115,7 +115,7 @@ public class Projeto extends Thread  {
                     portaCoordenador = Integer.parseInt(portaNodo);
 
                     // Thread de atualização do arquivo.txt
-                    arqCoordThread();
+                    arqCoordThread(serverSocket);
 
                     // Coordenação dos eventos 
                     while(true){
@@ -241,7 +241,7 @@ public class Projeto extends Thread  {
        }).start();
     }
 
-    public static void arqCoordThread(){
+    public static void arqCoordThread(DatagramSocket serverSocket){
         //Envia e recebe dados via socket
         byte[] envioDados = new byte[1024];
         byte[] recebeDados = new byte[1024];
