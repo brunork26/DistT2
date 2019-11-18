@@ -148,7 +148,7 @@ public class Projeto extends Thread  {
                     // loop de Consumo ou produção
                     
                 }
-                serverSocket.close();
+                //serverSocket.close();
 
             } catch (Exception e) {
                 
@@ -169,12 +169,12 @@ public class Projeto extends Thread  {
                 byte[] recebeDados = new byte[1024];
                 
                 try {     
-                    
+                    DatagramSocket serverSocket = new DatagramSocket(portaNodoQueNaoMorre);
+                    DatagramSocket clientSocket = new DatagramSocket(); 
                     while(true){
                         
                         try {
-                            DatagramSocket serverSocket = new DatagramSocket(portaNodoQueNaoMorre);
-                            DatagramSocket clientSocket = new DatagramSocket(); 
+
                             BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
@@ -193,7 +193,7 @@ public class Projeto extends Thread  {
                             arquivo.append(dadosPacote + "\n");
                             arquivo.flush();
                             arquivo.close();
-                            serverSocket.close();
+                            //serverSocket.close();
 
                             // infos:
                             // 0 - id 
@@ -222,7 +222,7 @@ public class Projeto extends Thread  {
                                             envioDados.length, InetAddress.getByName(infos[1]) , Integer.parseInt(infos[2]));
                             
                             clientSocket.send(pacoteUDP);
-                            clientSocket.close();
+                            //clientSocket.close();
 
                             System.out.println("Confirmação enviada\n");
 
@@ -249,27 +249,33 @@ public class Projeto extends Thread  {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                try {
+                    DatagramSocket serverSocket2 = new DatagramSocket(portaCoordenador);
+                    DatagramPacket pacoteUDP2 = new DatagramPacket(recebeDados,recebeDados.length);
+                
+                
+                    while(true){
+                        try {
+                            
+                            BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
+                            // Espera recebimento de pacote
+                            serverSocket2.receive(pacoteUDP2);
+                            
+                            // Recebe ID - IP - PORTA do novo NODO conectado 
+                            String dadosPacote = new String(pacoteUDP2.getData(),
+                                                pacoteUDP2.getOffset(), pacoteUDP2.getLength(),"UTF-8");
+                            
+                            arquivo.append(dadosPacote);
+                            arquivo.close();
 
-                while(true){
-                    try {
-                        DatagramSocket serverSocket2 = new DatagramSocket(portaCoordenador);
-                        DatagramPacket pacoteUDP2 = new DatagramPacket(recebeDados,recebeDados.length);
-                        BufferedWriter arquivo = new BufferedWriter(new FileWriter("./arq.txt",true));
-                        // Espera recebimento de pacote
-                        serverSocket2.receive(pacoteUDP2);
-                        
-                        // Recebe ID - IP - PORTA do novo NODO conectado 
-                        String dadosPacote = new String(pacoteUDP2.getData(),
-                                            pacoteUDP2.getOffset(), pacoteUDP2.getLength(),"UTF-8");
-                        
-                        arquivo.append(dadosPacote);
-                        arquivo.close();
-
-                        System.out.println("\nNovo Nodo Conectado...\n");
-                        
-                    } catch (Exception e) {
-                        
+                            System.out.println("\nNovo Nodo Conectado...\n");
+                            
+                        } catch (Exception e) {
+                            
+                        }
                     }
+                } catch (Exception e) {
+                    //TODO: handle exception
                 }
                 
 
