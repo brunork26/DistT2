@@ -104,7 +104,7 @@ public class Projeto extends Thread  {
 
                 String[] infosConfirmacao = confirmacaoCoord.split("/");                                                          
 
-                System.out.println(confirmacaoCoord);
+                System.out.println(infosConfirmacao[0]);
 
                 // Se coordenador, entra no loop que gerencia os Nodos subsequentes e Buffer (Liberando acessos)
                 // Se não só 'consome/produz' dados
