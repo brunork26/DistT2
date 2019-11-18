@@ -79,6 +79,8 @@ public class Projeto extends Thread  {
             // registro TXT nodo que nunca morre
             registro = id + "/" + host + "/" + portaNodo;
             envioDados = registro.getBytes();
+
+            Buffer bufferCompartilhado = new Buffer();
   
             try {
                 DatagramSocket clientSocket = new DatagramSocket();
@@ -129,6 +131,14 @@ public class Projeto extends Thread  {
                     System.out.println(ipCoordenador + " - " + portaCoordenador + "\n");
                     
                     // loop de Consumo ou produção
+                    if(tipo.equals("c")) {
+                        Consumidor c = new Consumidor(Integer.parseInt(id), bufferCompartilhado, 1);
+                        c.start();
+
+                    } else if (tipo.equals("p")) {
+                        Produtor p = new Produtor(Integer.parseInt(id), bufferCompartilhado, 1);
+                        p.start();
+                    }
                     
                 }
                 serverSocket.close();
