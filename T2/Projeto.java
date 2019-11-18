@@ -38,6 +38,7 @@ public class Projeto extends Thread  {
     public static String ipCoordenador = "";
     public static int portaCoordenador;
     public static int portCoordenadorArquivo = 10101;
+    public static int portaCoordenadorExec = 10102;
 
     public static Semaforo sBuffer,sConsumidor,sProdutor;
 
@@ -315,7 +316,7 @@ public class Projeto extends Thread  {
                 byte[] envioDados = new byte[1024];
                 byte[] recebeDados = new byte[1024];
                 try {           
-                    DatagramSocket serverSocket = new DatagramSocket(portaCoordenador);
+                    DatagramSocket serverSocket = new DatagramSocket(portaCoordenadorExec);
                     while(true){                      
                         try {        
                             DatagramSocket clientSocket = new DatagramSocket(); 
