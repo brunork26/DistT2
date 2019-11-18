@@ -317,7 +317,8 @@ public class Projeto extends Thread  {
                 try {           
                     DatagramSocket serverSocket = new DatagramSocket(portaCoordenadorExec);
                     while(true){                      
-                        try {        
+                        try {
+                                 
                             DatagramSocket clientSocket = new DatagramSocket(); 
                             // Pacote UDP de recebimento
                             DatagramPacket pacoteUDP = new DatagramPacket(recebeDados,recebeDados.length);
@@ -325,47 +326,59 @@ public class Projeto extends Thread  {
                             
                             // Espera recebimento de pacote
                             serverSocket.receive(pacoteUDP);
-                            
-                            System.out.println("Novo Nodo conectado 2...\n");
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        byte[] envioDados = new byte[1024];
+                                    System.out.println("Novo Nodo conectado 2...\n");
 
-                            String dadosPacote = new String(pacoteUDP.getData(),
-                                                 pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
-                            String tipo = dadosPacote.substring(0,1);
-                            int id = Integer.parseInt(dadosPacote.substring(2,3));
-                            int valor = Integer.parseInt(dadosPacote.substring(4));
-                            String sentence = "";
-                            System.out.println(sentence);
-                            switch(tipo) {
-                                case "c": {
-                                            System.out.println("Quer consumir"); 
-                                            bufferCompartilhado.get(id);
-                                            sentence = "Consumidor: " + id + 
-                                                       "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
-                                          } break;
-                                case "p": {
-                                            System.out.println("Quer Produzir"); 
-                                            bufferCompartilhado.set(id, valor);
-                                            sentence = "Produtor: " + id + 
-                                            "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
-                                          } break;
-                                default: {
-                                    System.out.println("Pacote UDP com problemas");
-                                    System.exit(0);
-                                } break;
-                            }
-                            //serverSocket.close();
-			                System.out.println(sentence);
-			                InetAddress ip = pacoteUDP.getAddress();
-			                int porta = pacoteUDP.getPort();
-			                String capitalizedSentence = sentence.toUpperCase();
- 
-                            envioDados = capitalizedSentence.getBytes();
-                            
-                            DatagramPacket sendPacket = new DatagramPacket(envioDados, envioDados.length, ip, porta);
-                            clientSocket.send(pacoteUDP);
-                            clientSocket.close();
+                                    String dadosPacote = new String(pacoteUDP.getData(),
+                                                         pacoteUDP.getOffset(), pacoteUDP.getLength(),"UTF-8");
+                                    String tipo = dadosPacote.substring(0,1);
+                                    int id = Integer.parseInt(dadosPacote.substring(2,3));
+                                    int valor = Integer.parseInt(dadosPacote.substring(4));
+                                    String sentence = "";
+                                    System.out.println(sentence);
+                                    switch(tipo) {
+                                        case "c": {
+                                                    System.out.println("Quer consumir"); 
+                                                    bufferCompartilhado.get(id);
+                                                    sentence = "Consumidor: " + id + 
+                                                               "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
+                                                  } break;
+                                        case "p": {
+                                                    System.out.println("Quer Produzir"); 
+                                                    bufferCompartilhado.set(id, valor);
+                                                    sentence = "Produtor: " + id + 
+                                                    "\nConteúdo no Buffer" + bufferCompartilhado.getConteudo();
+                                                  } break;
+                                        default: {
+                                            System.out.println("Pacote UDP com problemas");
+                                            System.exit(0);
+                                        } break;
+                                    }
+                                    //serverSocket.close();
+                                    System.out.println(sentence);
+                                    InetAddress ip = pacoteUDP.getAddress();
+                                    int porta = pacoteUDP.getPort();
+                                    String capitalizedSentence = sentence.toUpperCase();
+         
+                                    envioDados = capitalizedSentence.getBytes();
+                                    
+                                    DatagramPacket sendPacket = new DatagramPacket(envioDados, envioDados.length, ip, porta);
+                                    clientSocket.send(pacoteUDP);
+                                    clientSocket.close();
+        
+                                    System.out.println("Confirmação enviada\n");
+                                    } catch (Exception e) {
+                                    }
+                                    
+                                }
+                            }).start();
 
-                            System.out.println("Confirmação enviada\n");
+                            
+                            
 
                         } catch (Exception e) {
                             System.out.println("\nErro no recebimento do pacote UDP ou na escrita do arquivo\n");
