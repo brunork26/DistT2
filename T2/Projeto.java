@@ -154,14 +154,20 @@ public class Projeto extends Thread  {
                     
                     //System.out.println("\nEnvio de dados para o coordenador salvar no TXT \n");
                     // loop de Consumo ou produção
+                    //sProdutor = new Semaforo(1);
                     if(tipo.equals("c")) {
                         int idConsumidor = Integer.parseInt(id);
                         Consumidor c = new Consumidor(idConsumidor, 1);
-                        c.consumir(ipCoordenador, portaCoordenadorExec);  
+                        while(true) {
+                            c.consumir(ipCoordenador, portaCoordenadorExec);  
+                        }
                     } else if (tipo.equals("p")) {
                         int idProdutor = Integer.parseInt(id);
                         Produtor p = new Produtor(idProdutor, 1);
-                        p.produzir(ipCoordenador, portaCoordenadorExec);
+                        while(true) {
+                            //sProdutor.P();
+                            p.produzir(ipCoordenador, portaCoordenadorExec);
+                        }
                     }
                     
                 }
